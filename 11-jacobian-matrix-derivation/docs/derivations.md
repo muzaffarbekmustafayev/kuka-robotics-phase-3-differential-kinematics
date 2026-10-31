@@ -1,28 +1,34 @@
-# Geometric Jacobian Cross-Product Theorem & Velocity Mapping
-## Matematik Isbot va KUKA KR 6 R900-2 uchun Hisoblash
+# Geometrik Yaqobi Matritsasi va Virtual Ish Printsipi
 
-### Asosiy Formula:
-$$\vec{V}_e = \begin{bmatrix} \vec{v}_e \\ \vec{\omega}_e \end{bmatrix} = J(\vec{q}) \dot{\vec{q}}, \quad \vec{J}_{vi} = \vec{z}_{i-1} \times (\vec{p}_e - \vec{p}_{i-1}), \quad \vec{J}_{\omega i} = \vec{z}_{i-1}$$
+## 1. Geometrik Yaqobi Matritsasi (Geometric Jacobian)
+Manipulyator bo'g'in burchaklari tezligi $\mathbf{\dot{q}} \in \mathbb{R}^6$ bilan uning ishchi organi (TCP) fazoviy tvisti $\mathbf{V}_e = [\mathbf{v}^T, \boldsymbol{\omega}^T]^T \in \mathbb{R}^6$ orasidagi chiziqli bog'lanish Yaqobi matritsasi orqali ifodalanadi:
+
+$$\mathbf{V}_e = J(\mathbf{q}) \mathbf{\dot{q}}$$
+
+bu yerda $J(\mathbf{q}) \in \mathbb{R}^{6 \times 6}$ matritsasining har bir $i$-ustuni $i$-bo'g'inning elementar hissasidir:
+
+$$J_i = \begin{bmatrix} \mathbf{J}_{v, i} \\ \mathbf{J}_{\omega, i} \end{bmatrix} = \begin{bmatrix} \mathbf{z}_{i-1} \times (\mathbf{p}_e - \mathbf{p}_{i-1}) \\ \mathbf{z}_{i-1} \end{bmatrix}$$
+
+bu yerda:
+- $\mathbf{z}_{i-1}$ — $i$-bo'g'inning $0$-bazaviy koordinata tizimidagi birlik aylanish o'qi;
+- $\mathbf{p}_{i-1}$ — $i-1$-zveno koordinata boshining pozitsiyasi;
+- $\mathbf{p}_e$ — oxirgi ishchi organ (TCP flanetsi) pozitsiyasi.
 
 ---
 
-### 1. Nazariy Asos va Teorema (Geometrik Yakobian Teoremasi)
-Bo'g'in burchaklari tezliklari $\dot{\vec{q}} = [\dot{q}_1, \dots, \dot{q}_6]^T$ bilan effektor fazoviy tvisti (chiziqli tezlik $\vec{v}_e$ va burchak tezlik $\vec{\omega}_e$) orasidagi chiziqli differensial munosabatni ko'ramiz.
+## 2. Virtual Ish Printsipi va Statik Kuchlar Dualizmi
+Aytaylik, robot flanetsiga tashqi kuch va moment (wrench) ta'sir qilmoqda: $\mathbf{F}_{ext} = [\mathbf{f}^T, \boldsymbol{\mu}^T]^T \in \mathbb{R}^6$.
+Ushbu kuchga qarshi turish uchun bo'g'in dvigatellari tomonidan hosil qilinadigan umumlashtirilgan momentlar $\boldsymbol{\tau} \in \mathbb{R}^6$ bo'lsin.
 
-> **Teorema (Geometrik Yakobian Teoremasi):**
-> Faqat aylanma (revolute) bo'g'inlardan tashkil topgan $n$-zvenoli zanjir uchun geometrik Yakobian matritsasi $J(\vec{q}) \in \mathbb{R}^{6 \times n}$ quyidagi ustunli vektorlar yig'indisidan iborat:
-> $$J(\vec{q}) = \begin{bmatrix} \vec{J}_{v1} & \vec{J}_{v2} & \dots & \vec{J}_{vn} \\ \vec{J}_{\omega 1} & \vec{J}_{\omega 2} & \dots & \vec{J}_{\omega n} \end{bmatrix}$$
-> bu yerda har bir $i$-bo'g'in uchun:
-> $$\vec{J}_{\omega i} = \vec{z}_{i-1}, \quad \vec{J}_{vi} = \vec{z}_{i-1} \times (\vec{p}_e - \vec{p}_{i-1})$$
-> * $\vec{z}_{i-1}$ — $i$-bo'g'inning aylanish o'qi birlik vektori (dunyo koordinatasida).
-> * $\vec{p}_{i-1}$ — $\{i-1\}$ koordinatalar tizimi boshlang'ich nuqtasi.
-> * $\vec{p}_e$ — asbob uchi (TCP) ning fazodagi pozitsiyasi.
+Virtual ish printsipiga ko'ra, cheksiz kichik virtual siljishlar $\delta \mathbf{q}$ va $\delta \mathbf{x} = J \delta \mathbf{q}$ da tizimning to'liq virtual ishi nolga teng bo'ladi:
 
-### 2. Keltirib Chiqarilishi (Vaqt Bo'yicha Differensiallash)
-1. Effektor pozitsiyasi $\vec{p}_e(\vec{q})$ ning vaqt bo'yicha to'liq hosilasi:
-   $$\vec{v}_e = \frac{d\vec{p}_e}{dt} = \sum_{i=1}^n \frac{\partial \vec{p}_e}{\partial q_i} \dot{q}_i$$
-2. $i$-bo'g'in $q_i$ burchakka burilganda, $\vec{p}_e$ nuqta $\vec{z}_{i-1}$ o'qi atrofida aylanadi:
-   $$\frac{\partial \vec{p}_e}{\partial q_i} = \vec{z}_{i-1} \times (\vec{p}_e - \vec{p}_{i-1})$$
-3. Burchak tezliklari esa vektorli qo'shiladi:
-   $$\vec{\omega}_e = \sum_{i=1}^n \vec{\omega}_i = \sum_{i=1}^n \vec{z}_{i-1} \dot{q}_i \quad \blacksquare$$
+$$\delta W = \boldsymbol{\tau}^T \delta \mathbf{q} - \mathbf{F}_{ext}^T \delta \mathbf{x} = 0$$
 
+$\delta \mathbf{x} = J \delta \mathbf{q}$ ni qo'yamiz:
+$$\boldsymbol{\tau}^T \delta \mathbf{q} - \mathbf{F}_{ext}^T (J \delta \mathbf{q}) = 0$$
+$$(\boldsymbol{\tau}^T - \mathbf{F}_{ext}^T J) \delta \mathbf{q} = 0$$
+
+Ixtiyoriy virtual siljish $\delta \mathbf{q}$ uchun tenglik bajarilishi shart bo'lganligi sababli:
+$$\boldsymbol{\tau}^T = \mathbf{F}_{ext}^T J \implies \mathbf{\boldsymbol{\tau} = J^T(\mathbf{q}) \mathbf{F}_{ext}}$$
+
+Isbot yakunlandi. Bu natija robot bo'g'in moment datchiklarisiz tashqi kuchlarni baholash (sensorless force estimation) imkonini beradi. $\blacksquare$

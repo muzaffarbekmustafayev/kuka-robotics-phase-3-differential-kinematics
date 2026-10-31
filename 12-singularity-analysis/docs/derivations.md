@@ -1,36 +1,37 @@
-# Kinematic Singularity Theorem, Determinant Decoupling & Yoshikawa Manipulability
-## Matematik Isbot va KUKA KR 6 R900-2 uchun Hisoblash
+# Kinematik Singulyarliklar va Yoshikawa Manipulyativligi
 
-### Asosiy Formula:
-$$\det(J(\vec{q})) = 0 \iff \text{rank}(J) < 6, \quad w = \sqrt{\det(J J^T)}$$
+## 1. Singulyarlik Shartlari
+Manipulyator konfiguratsiyasi $\mathbf{q} \in \mathbb{R}^6$ singulyar deyiladi, agar uning geometrik Yaqobi matritsasining rangi maksimaldan kichik bo'lsa:
+$$\text{rank}(J(\mathbf{q})) < 6 \iff \det(J(\mathbf{q})) = 0$$
+
+Bu holatda robotning ishchi organi kamida bitta fazoviy yo'nalishda harakatlanish erkinligini yo'qotadi va ushbu yo'nalish bo'ylab cheksiz katta bo'g'in tezliklari talab qilinadi ($\mathbf{\dot{q}} = J^{-1} \mathbf{v} \to \infty$).
 
 ---
 
-### 1. Nazariy Asos va Teorema (Kinematik Singulyarlik Teoremasi)
-Differensial kinematikada singulyarlik robotning fazodagi ma'lum bir yo'nalishlarda harakatlanish imkoniyatini yo'qotishidir.
+## 2. KUKA 6R Robotlarida 3 Ta Asosiy Singulyarlik Turi
 
-> **Teorema (Singulyarlik Kriteriyasi):**
-> Manipulyator Yakobiani $J(\vec{q}) \in \mathbb{R}^{6 \times 6}$ bo'lsin. Singulyarlik sharti uning determinanti nolga teng bo'lishi bilan aniqlanadi:
-> $$\det(J(\vec{q})) = 0 \iff \text{rank}(J(\vec{q})) < 6$$
-> Sferik bilakka ega KR 6 R900-2 uchun determinant ikkita alohida ko'paytuvchiga ajraladi:
-> $$\det(J(\vec{q})) = \det(J_{arm}(q_1, q_2, q_3)) \cdot \sin(q_5) = 0$$
+### 1. Bilak singulyarligi (Wrist Singularity):
+- **Shart:** $A_5 = 0^\circ$.
+- **Geometriya:** $A_4$ va $A_6$ o'qlari bitta to'g'ri chiziqqa kollinear tushib qoladi. Natijada bilak bitta aylanma erkinlik darajasini yo'qotadi.
 
-### 2. KUKA KR 6 R900-2 dagi 3 Ta Kritik Singulyarlik Holati
-#### 2.1 Bilak Singulyarligi (Wrist Singularity):
-* **Matematik sharti:** $q_5 = 0^\circ \implies \sin(q_5) = 0$.
-* **Fizik ma'nosi:** $A_4$ va $A_6$ motorlarining aylanish o'qlari to'g'ri chiziq bo'ylab ustma-ust (kollinear) tushib qoladi.
-* **Xavfi:** Agar robot chiziqli harakatda (LIN) ushbu nuqtadan o'tishga harakat qilsa, $A_4$ va $A_6$ motorlari cheksiz katta burchak tezlikka intiladi (kontroller `A4/A6 dynamic overload` xatosini beradi).
+### 2. Yelka singulyarligi (Shoulder Singularity):
+- **Shart:** Bilak markazi $P_w$ robotning birinchi aylanma o'qi $Z_0$ ga ustma-ust tushadi ($P_{wx} = 0, P_{wy} = 0$).
+- **Oqibat:** Flanetsni ozgina radial siljitish uchun birinchi o'q $A_1$ cheksiz katta burchak tezligida aylanishi talab etiladi.
 
-#### 2.2 Yelka Singulyarligi (Shoulder / Overhead Singularity):
-* **Matematik sharti:** $p_{wc, x}^2 + p_{wc, y}^2 = 0$.
-* **Fizik ma'nosi:** Bilak markazi $A_1$ o'qining to'g'ridan-to'g'ri ustiga (vertikal o'q chizig'iga) tushib qoladi.
+### 3. Tirsak singulyarligi (Elbow / Boundary Singularity):
+- **Shart:** Robot qo'li to'liq yozilgan ($R = R_{max} = 901.5\text{ mm}$) yoki o'ziga yig'ilgan ($R = R_{min}$).
+- **Oqibat:** Radial yo'nalishda hech qanday chiziqli tezlik hosil qilib bo'lmaydi.
 
-#### 2.3 Chegara Singulyarligi (Elbow / Boundary Singularity):
-* **Matematik sharti:** Robot qo'li to'liq cho'zilgan ($q_3$ burchak chegarasida) yoki to'liq bukilgan. Effektor ishchi sferaning eng chekka chegarasiga yetib borgan.
+---
 
-### 3. Yoshikawa Manipulyativlik Ko'rsatkichi (Manipulability Measure)
-Manipulyatorning singulyarlikdan qanchalik uzoqligi Yoshikawa indeksi orqali baholanadi:
-$$w(\vec{q}) = \sqrt{\det(J(\vec{q}) J(\vec{q})^T)} = |\det(J(\vec{q}))|$$
-* $w = 0$ bo'lsa: robot qulflangan (singulyar).
-* $w$ maksimal bo'lsa: robot barcha yo'nalishlarda teng erkinlik bilan eng samarali harakatlana oladi.
+## 3. Yoshikawa Manipulyativlik Ko'rsatkichi (Yoshikawa Measure)
+Kinematik qulaylik va singulyarlikdan uzoqlik darajasi Yoshikawa indeksi orqali ifodalanadi:
 
+$$w(\mathbf{q}) = \sqrt{\det(J(\mathbf{q}) J(\mathbf{q})^T)}$$
+
+Singulyar qiymatlar dekompozitsiyasiga (SVD: $J = U \Sigma V^T$) ko'ra:
+$$w(\mathbf{q}) = \prod_{i=1}^6 \sigma_i$$
+
+- $w(\mathbf{q}) > 0$ — robot to'liq boshqariluvchan;
+- $w(\mathbf{q}) = 0$ — konfiguratsiya qat'iy singulyar.
+- Konditsionallik soni: $\kappa(J) = \frac{\sigma_{max}}{\sigma_{min}}$. Singulyarlik yaqinida $\kappa \to \infty$.
